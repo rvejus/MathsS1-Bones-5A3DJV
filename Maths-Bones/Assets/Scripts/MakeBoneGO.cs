@@ -17,7 +17,6 @@ public class MakeBoneGO : MonoBehaviour
         initCovarMat();
         covarMatCalcul();
     }
-
     public void calculBarycentre()
     {
         Vector3 barypos = Vector3.zero;
@@ -148,7 +147,6 @@ public class MakeBoneGO : MonoBehaviour
         }
         return covar;
     }
-
     public void covarMatCalcul()
     {
         covarMat[0][0] = variance("x");
@@ -162,4 +160,5 @@ public class MakeBoneGO : MonoBehaviour
         covarMat[2][2] = variance("z");
         Debug.Log(covarMat[0][0]+" "+covarMat[0][1]+" "+covarMat[0][2]+"\n"+covarMat[1][0]+" "+covarMat[1][1]+" "+covarMat[1][2]+"\n"+covarMat[2][0]+" "+covarMat[2][1]+" "+covarMat[2][2]+"\n");
     }
+    
 }
