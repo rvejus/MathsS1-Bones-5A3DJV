@@ -8,13 +8,33 @@ public class MakeBoneGO : MonoBehaviour
     public GameObject prefabBary;
     public List<GameObject> goPoints = new List<GameObject>();
     public GameObject bary;
+    
+    public GameObject PrefabGameObject;
+    public Mesh MeshGameObject;
+    public Vector3[] Meshvertices;
+    public Vector3[] vertexWorldPosition;
+    Transform PrefabTransform;
+    
     public Vector3 OG=Vector3.zero;
     public List<List<float>> covarMat = new List<List<float>>();
     public float valeurPropre = 0;
     public Vector3 vecteurPropre = new Vector3();
    
+
+    public Vector3[] worldPt;
+    
     void Start()
     {
+        MeshGameObject = PrefabGameObject.GetComponent<MeshFilter>().mesh;
+        Meshvertices = MeshGameObject.vertices;
+        vertexWorldPosition = Meshvertices;
+        PrefabTransform = PrefabGameObject.transform;
+        
+        for( int i=0 ; i<Meshvertices.Length ; i++ )
+        {
+            vertexWorldPosition[i] = PrefabTransform.TransformPoint( Meshvertices[i]);
+        }
+
         calculBarycentre();
         recenter();
         initCovarMat();
@@ -24,11 +44,15 @@ public class MakeBoneGO : MonoBehaviour
     public void calculBarycentre()
     {
         Vector3 barypos = Vector3.zero;
+        /*foreach (Vector3 pos in vertexWorldPosition)
+        {
+            barypos += pos;
+        }*/
         foreach (GameObject go in goPoints)
         {
             barypos += go.transform.position;
         }
-
+        //barypos /= vertexWorldPosition.Length;
         barypos /= goPoints.Count;
         bary = Instantiate(prefabBary, barypos, Quaternion.Euler(Vector3.zero));
     }
@@ -40,6 +64,7 @@ public class MakeBoneGO : MonoBehaviour
         {
             go.transform.position -= OG;
         }
+        //PrefabTransform.position -= OG;
     }
     public void initCovarMat()
     {
@@ -156,15 +181,9 @@ public class MakeBoneGO : MonoBehaviour
     }
     public void covarMatCalcul()
     {
-        covarMat[0][0] = variance("x");
-        covarMat[0][1] = covariance("xy");
-        covarMat[0][2] = covariance("xz");
-        covarMat[1][0] = covariance("xy");
-        covarMat[1][1] = variance("y");
-        covarMat[1][2] = covariance("yz");
-        covarMat[2][0] = covariance("xz");
-        covarMat[2][1] = covariance("xy");
-        covarMat[2][2] = variance("z");
+        covarMat[0][0] = variance("x");covarMat[0][1] = covariance("xy"); covarMat[0][2] = covariance("xz");
+        covarMat[1][0] = covariance("xy"); covarMat[1][1] = variance("y"); covarMat[1][2] = covariance("yz");
+        covarMat[2][0] = covariance("xz"); covarMat[2][1] = covariance("yz"); covarMat[2][2] = variance("z");
         Debug.Log(covarMat[0][0]+" "+covarMat[0][1]+" "+covarMat[0][2]+"\n"+covarMat[1][0]+" "+covarMat[1][1]+" "+covarMat[1][2]+"\n"+covarMat[2][0]+" "+covarMat[2][1]+" "+covarMat[2][2]+"\n");
     }
 
