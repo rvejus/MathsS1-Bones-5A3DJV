@@ -10,12 +10,16 @@ public class MakeBoneGO : MonoBehaviour
     public GameObject bary;
     public Vector3 OG=Vector3.zero;
     public List<List<float>> covarMat = new List<List<float>>();
+    public float valeurPropre = 0;
+    public Vector3 vecteurPropre = new Vector3();
+   
     void Start()
     {
         calculBarycentre();
         recenter();
         initCovarMat();
         covarMatCalcul();
+        CalculValeurPropre();
     }
     public void calculBarycentre()
     {
@@ -162,6 +166,59 @@ public class MakeBoneGO : MonoBehaviour
         covarMat[2][1] = covariance("xy");
         covarMat[2][2] = variance("z");
         Debug.Log(covarMat[0][0]+" "+covarMat[0][1]+" "+covarMat[0][2]+"\n"+covarMat[1][0]+" "+covarMat[1][1]+" "+covarMat[1][2]+"\n"+covarMat[2][0]+" "+covarMat[2][1]+" "+covarMat[2][2]+"\n");
+    }
+
+    public void CalculValeurPropre()
+    {
+        Vector3 V0 = new Vector3(Random.value, Random.value, 1);
+        float tolerance = 0.01f;
+        float erreur = tolerance + 1;
+        int iteration = 0;
+        while (erreur> tolerance && iteration < 100)
+        {
+            Vector3 Vk = new Vector3();
+
+            // M.Vk
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    Vk[i] += covarMat[i][j] * V0[j];
+                }
+            }
+
+            float precedentValeurPropre = valeurPropre;
+            valeurPropre = Vk.magnitude / V0.magnitude;
+            erreur = Mathf.Abs(valeurPropre - precedentValeurPropre) / Mathf.Abs(valeurPropre);
+
+            vecteurPropre = Vk.normalized;
+
+            
+           /* if (iteration > 0) // Vérification seulement à partir de la deuxième itération
+            {
+                float lambda = Vector3.Dot(Vk, vecteurPropre) / vecteurPropre.magnitude; // Calcul de lambda
+                Vector3 Av = new Vector3();
+                for (int i = 0; i < 3; i++) // Calcul de A.v
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Av[i] += covarMat[i][j] * vecteurPropre[j];
+                    }
+                }
+                if ((Av - lambda * vecteurPropre).magnitude > tolerance) // Vérification de la cohérence
+                {
+                    Debug.LogWarning("La valeur propre et le vecteur propre ne sont pas cohérents ! a l'iteration : " + iteration);
+                }
+            } */
+            V0 = vecteurPropre;
+            iteration++;
+            Debug.Log("Valeur propre a l'iteration " + iteration + " = "+ valeurPropre);
+            Debug.Log("Vecteur propre a l'iteration " + iteration + " = "+ vecteurPropre);
+        }
+
+        
+        
+        
     }
     
 }
