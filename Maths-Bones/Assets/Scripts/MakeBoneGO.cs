@@ -40,22 +40,27 @@ public class MakeBoneGO : MonoBehaviour
     public void calculBarycentre()
     {
         Vector3 barypos = Vector3.zero;
-        foreach (Vector3 pos in vertexWorldPosition)
+        /*foreach (Vector3 pos in vertexWorldPosition)
         {
             barypos += pos;
+        }*/
+        foreach (GameObject go in goPoints)
+        {
+            barypos += go.transform.position;
         }
-        barypos /= vertexWorldPosition.Length;
+        //barypos /= vertexWorldPosition.Length;
+        barypos /= goPoints.Count;
         bary = Instantiate(prefabBary, barypos, Quaternion.Euler(Vector3.zero));
     }
     public void recenter()
     {
         OG = Vector3.zero + bary.transform.position;
         bary.transform.position = Vector3.zero;
-        /*foreach (GameObject go in goPoints)
+        foreach (GameObject go in goPoints)
         {
             go.transform.position -= OG;
-        }*/
-        PrefabTransform.position -= OG;
+        }
+        //PrefabTransform.position -= OG;
     }
     public void initCovarMat()
     {
