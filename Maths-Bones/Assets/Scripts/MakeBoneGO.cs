@@ -8,10 +8,30 @@ public class MakeBoneGO : MonoBehaviour
     public GameObject prefabBary;
     public List<GameObject> goPoints = new List<GameObject>();
     public GameObject bary;
+    
+    public GameObject PrefabGameObject;
+    public Mesh MeshGameObject;
+    public Vector3[] Meshvertices;
+    public Vector3[] vertexWorldPosition;
+    Transform PrefabTransform;
+    
     public Vector3 OG=Vector3.zero;
     public List<List<float>> covarMat = new List<List<float>>();
+
+    public Vector3[] worldPt;
+    
     void Start()
     {
+        MeshGameObject = PrefabGameObject.GetComponent<MeshFilter>().mesh;
+        Meshvertices = MeshGameObject.vertices;
+        vertexWorldPosition = Meshvertices;
+        PrefabTransform = PrefabGameObject.transform;
+        
+        for( int i=0 ; i<Meshvertices.Length ; i++ )
+        {
+            vertexWorldPosition[i] = PrefabTransform.TransformPoint( Meshvertices[i]);
+        }
+
         calculBarycentre();
         recenter();
         initCovarMat();
@@ -20,22 +40,22 @@ public class MakeBoneGO : MonoBehaviour
     public void calculBarycentre()
     {
         Vector3 barypos = Vector3.zero;
-        foreach (GameObject go in goPoints)
+        foreach (Vector3 pos in vertexWorldPosition)
         {
-            barypos += go.transform.position;
+            barypos += pos;
         }
-
-        barypos /= goPoints.Count;
+        barypos /= vertexWorldPosition.Length;
         bary = Instantiate(prefabBary, barypos, Quaternion.Euler(Vector3.zero));
     }
     public void recenter()
     {
         OG = Vector3.zero + bary.transform.position;
         bary.transform.position = Vector3.zero;
-        foreach (GameObject go in goPoints)
+        /*foreach (GameObject go in goPoints)
         {
             go.transform.position -= OG;
-        }
+        }*/
+        PrefabTransform.position -= OG;
     }
     public void initCovarMat()
     {
