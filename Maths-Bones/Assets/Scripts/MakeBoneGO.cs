@@ -177,15 +177,9 @@ public class MakeBoneGO : MonoBehaviour
     }
     public void covarMatCalcul()
     {
-        covarMat[0][0] = variance("x");
-        covarMat[0][1] = covariance("xy");
-        covarMat[0][2] = covariance("xz");
-        covarMat[1][0] = covariance("xy");
-        covarMat[1][1] = variance("y");
-        covarMat[1][2] = covariance("yz");
-        covarMat[2][0] = covariance("xz");
-        covarMat[2][1] = covariance("xy");
-        covarMat[2][2] = variance("z");
+        covarMat[0][0] = variance("x");covarMat[0][1] = covariance("xy"); covarMat[0][2] = covariance("xz");
+        covarMat[1][0] = covariance("xy"); covarMat[1][1] = variance("y"); covarMat[1][2] = covariance("yz");
+        covarMat[2][0] = covariance("xz"); covarMat[2][1] = covariance("yz"); covarMat[2][2] = variance("z");
         Debug.Log(covarMat[0][0]+" "+covarMat[0][1]+" "+covarMat[0][2]+"\n"+covarMat[1][0]+" "+covarMat[1][1]+" "+covarMat[1][2]+"\n"+covarMat[2][0]+" "+covarMat[2][1]+" "+covarMat[2][2]+"\n");
     }
     
