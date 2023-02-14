@@ -102,8 +102,9 @@ public class MakeBoneGO : MonoBehaviour
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.x - moyX) * (pos.y - moyY);
-                covar /= goPoints.Count;
+                
             }
+            covar /= goPoints.Count;
         }
         else if (angle == "xz")
         {
@@ -122,8 +123,9 @@ public class MakeBoneGO : MonoBehaviour
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.x - moyX) * (pos.z - moyZ);
-                covar /= goPoints.Count;
+                
             }
+            covar /= goPoints.Count;
         }
         else if (angle == "yz")
         {
@@ -142,8 +144,9 @@ public class MakeBoneGO : MonoBehaviour
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.z - moyZ) * (pos.y - moyY);
-                covar /= goPoints.Count;
+                
             }
+            covar /= goPoints.Count;
         }
         return covar;
     }
