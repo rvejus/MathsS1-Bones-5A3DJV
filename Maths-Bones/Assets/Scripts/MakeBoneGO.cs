@@ -50,25 +50,28 @@ public class MakeBoneGO : MonoBehaviour
     public void calculBarycentre()
     {
         Vector3 barypos = Vector3.zero;
-        /*foreach (Vector3 pos in vertexWorldPosition)
+        foreach (Vector3 pos in vertexWorldPosition)
         {
             barypos += pos;
-        }*/
-        foreach (GameObject go in goPoints)
+        }
+        /*foreach (GameObject go in goPoints)
         {
             barypos += go.transform.position;
-        }
-        //barypos /= vertexWorldPosition.Length;
-        barypos /= goPoints.Count;
+        }*/
+        barypos /= vertexWorldPosition.Length;
+        //barypos /= goPoints.Count;
         bary = Instantiate(prefabBary, barypos, Quaternion.Euler(Vector3.zero));
     }
     public void recenter()
     {
         OG = Vector3.zero + bary.transform.position;
         bary.transform.position = Vector3.zero;
-        foreach (GameObject go in goPoints)
+        /*foreach (GameObject go in goPoints)
         {
             go.transform.position -= OG;
+        }*/
+        for (int i = 0; i < vertexWorldPosition.Length; i++) {
+            vertexWorldPosition [i] -= OG;
         }
         //PrefabTransform.position -= OG;
     }
@@ -76,9 +79,12 @@ public class MakeBoneGO : MonoBehaviour
     {
        // OG = Vector3.zero + bary.transform.position;
         bary.transform.position = Vector3.zero;
-        foreach (GameObject go in goPoints)
+        /*foreach (GameObject go in goPoints)
         {
             go.transform.position += OG;
+        }*/
+        for (int i = 0; i < vertexWorldPosition.Length; i++) {
+            vertexWorldPosition [i] += OG;
         }
 
         bary.transform.position += OG;
@@ -103,31 +109,47 @@ public class MakeBoneGO : MonoBehaviour
         float moyenne = 0;
         if (angle == "x")
         {
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 moyenne += go.transform.position.x;
                 Var += Mathf.Pow(go.transform.position.x, 2);
+            }*/
+            foreach (Vector3 pos in vertexWorldPosition)
+            {
+                moyenne += pos.x;
+                Var += Mathf.Pow(pos.x, 2);
             }
             
         }else if (angle == "y")
         {
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 moyenne += go.transform.position.y;
                 Var += Mathf.Pow(go.transform.position.y, 2);
+            }*/
+            foreach (Vector3 pos in vertexWorldPosition)
+            {
+                moyenne += pos.y;
+                Var += Mathf.Pow(pos.y, 2);
             }
             
         }else if (angle == "z")
         {
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 moyenne += go.transform.position.z;
                 Var += Mathf.Pow(go.transform.position.z, 2);
+            }*/
+            foreach (Vector3 pos in vertexWorldPosition)
+            {
+                moyenne += pos.z;
+                Var += Mathf.Pow(pos.z, 2);
             }
             
         }
         moyenne /= goPoints.Count;
-        Var /= goPoints.Count;
+        //Var /= goPoints.Count;
+        Var /= vertexWorldPosition.Length;
         Var -= Mathf.Pow(moyenne, 2);
         return Var;
     }
@@ -139,63 +161,116 @@ public class MakeBoneGO : MonoBehaviour
             Debug.Log("xy");
             float moyX = 0;
             float moyY = 0;
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 moyX += pos.x;
                 moyY += pos.y;
+            }*/
+            
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                moyX += pos.x;
+                moyY += pos.y;
             }
-            moyX /= goPoints.Count;
-            moyY /= goPoints.Count;
-            foreach (GameObject go in goPoints)
+            //moyX /= goPoints.Count;
+            moyX /= vertexWorldPosition.Length;
+            
+            //moyY /= goPoints.Count;
+            moyY /= vertexWorldPosition.Length;
+            
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.x - moyX) * (pos.y - moyY);
                 
+            }*/
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                covar += (pos.x - moyX) * (pos.y - moyY);
+                
             }
-            covar /= goPoints.Count;
+            //covar /= goPoints.Count;
+            covar /= vertexWorldPosition.Length;
         }
         else if (angle == "xz")
         {
             Debug.Log("xz");
             float moyX = 0;
             float moyZ = 0;
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 moyX += pos.x;
                 moyZ += pos.z;
+            }*/
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                moyX += pos.x;
+                moyZ += pos.z;
             }
-            moyX /= goPoints.Count;
-            moyZ /= goPoints.Count;
-            foreach (GameObject go in goPoints)
+            //moyX /= goPoints.Count;
+            moyX /= vertexWorldPosition.Length;
+            
+            //moyZ /= goPoints.Count;
+            moyZ /= vertexWorldPosition.Length;
+            
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.x - moyX) * (pos.z - moyZ);
                 
+            }*/
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                covar += (pos.x - moyX) * (pos.z - moyZ);
+                
             }
-            covar /= goPoints.Count;
+            //covar /= goPoints.Count;
+            covar /= vertexWorldPosition.Length;
         }
         else if (angle == "yz")
         {
             Debug.Log("yz");
             float moyZ = 0;
             float moyY = 0;
-            foreach (GameObject go in goPoints)
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 moyZ += pos.z;
                 moyY += pos.y;
+            }*/
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                moyZ += pos.z;
+                moyY += pos.y;
             }
-            moyZ /= goPoints.Count;
-            moyY /= goPoints.Count;
-            foreach (GameObject go in goPoints)
+            
+            //moyZ /= goPoints.Count;
+            moyZ /= vertexWorldPosition.Length;
+            
+            //moyY /= goPoints.Count;
+            moyY /= vertexWorldPosition.Length;
+            
+            /*foreach (GameObject go in goPoints)
             {
                 Vector3 pos = go.transform.position;
                 covar += (pos.z - moyZ) * (pos.y - moyY);
                 
+            }*/
+            foreach (Vector3 posV in vertexWorldPosition)
+            {
+                Vector3 pos = posV;
+                covar += (pos.z - moyZ) * (pos.y - moyY);
+                
             }
-            covar /= goPoints.Count;
+            //covar /= goPoints.Count;
+            covar /= vertexWorldPosition.Length;
         }
         return covar;
     }
@@ -259,11 +334,16 @@ public class MakeBoneGO : MonoBehaviour
     public List<Vector3> ProjectionDonneCentre( )
     {
         List<Vector3> PointProjete = new List<Vector3>() ;
-        for (int i = 0 ; i <goPoints.Count  ; i++)
+        /*for (int i = 0 ; i <goPoints.Count  ; i++)*/
+        for (int i = 0 ; i <vertexWorldPosition.Length  ; i++)
         {
-            PointProjete.Add((Vector3.Dot(goPoints[i].transform.position, vecteurPropre) /
+            /*PointProjete.Add((Vector3.Dot(goPoints[i].transform.position, vecteurPropre) /
                                  Mathf.Pow(vecteurPropre.magnitude, 2)) *
-                                vecteurPropre);
+                                vecteurPropre);*/
+            
+            PointProjete.Add((Vector3.Dot(vertexWorldPosition[i], vecteurPropre) /
+                              Mathf.Pow(vecteurPropre.magnitude, 2)) *
+                             vecteurPropre);
         }
         
         Debug.Log(PointProjete.Count);
