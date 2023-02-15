@@ -17,9 +17,10 @@ public class MakeBoneGO : MonoBehaviour
     
     public Vector3 OG=Vector3.zero;
     public List<List<float>> covarMat = new List<List<float>>();
+    
     public float valeurPropre = 0;
     public Vector3 vecteurPropre = new Vector3();
-   
+    public List<Vector3> PointProjete = new List<Vector3>();
 
     public Vector3[] worldPt;
     
@@ -241,7 +242,7 @@ public class MakeBoneGO : MonoBehaviour
     {
         for (int i = 0 ; i <goPoints.Count ; i++)
         {
-            goPoints[i].transform.position =
+            PointProjete[i] =
                 (Vector3.Dot(goPoints[i].transform.position, vecteurPropre) / Mathf.Pow(vecteurPropre.magnitude, 2)) *
                 vecteurPropre;
         }
@@ -251,5 +252,4 @@ public class MakeBoneGO : MonoBehaviour
     {
         
     }
-    
 }
