@@ -40,6 +40,7 @@ public class MakeBoneGO : MonoBehaviour
         initCovarMat();
         covarMatCalcul();
         CalculValeurPropre();
+        ProjectionDonnéCentré();
     }
     public void calculBarycentre()
     {
@@ -234,9 +235,20 @@ public class MakeBoneGO : MonoBehaviour
             Debug.Log("Valeur propre a l'iteration " + iteration + " = "+ valeurPropre);
             Debug.Log("Vecteur propre a l'iteration " + iteration + " = "+ vecteurPropre);
         }
+    }
 
-        
-        
+    public void ProjectionDonnéCentré()
+    {
+        for (int i = 0 ; i <goPoints.Count ; i++)
+        {
+            goPoints[i].transform.position =
+                (Vector3.Dot(goPoints[i].transform.position, vecteurPropre) / Mathf.Pow(vecteurPropre.magnitude, 2)) *
+                vecteurPropre;
+        }
+    }
+
+    public void CalculExtremum()
+    {
         
     }
     
