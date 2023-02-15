@@ -46,6 +46,7 @@ public class MakeBoneGO : MonoBehaviour
         CalculValeurPropre();
         CalculExtremum();
         decenter();
+        DrawBones();
     }
     public void calculBarycentre()
     {
@@ -393,6 +394,13 @@ public class MakeBoneGO : MonoBehaviour
         
         qL = Instantiate(prefabExtrmum, minusExtremus, Quaternion.Euler(Vector3.zero));
         qK = Instantiate(prefabExtrmum, bigusExtremus, Quaternion.Euler(Vector3.zero));
+    }
+
+    void DrawBones()
+    {
+        LineRenderer ln = qL.AddComponent<LineRenderer>();
+        ln.SetPosition(0, qL.transform.position);
+        ln.SetPosition(1, qK.transform.position);
     }
 
 }
