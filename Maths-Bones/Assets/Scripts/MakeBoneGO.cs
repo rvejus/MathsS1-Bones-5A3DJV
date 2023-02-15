@@ -8,7 +8,10 @@ public class MakeBoneGO : MonoBehaviour
     public GameObject prefabBary;
     public List<GameObject> goPoints = new List<GameObject>();
     public GameObject bary;
-    
+    public GameObject qL;
+    public GameObject qK;
+
+    public GameObject prefabExtrmum;
     public GameObject PrefabGameObject;
     public Mesh MeshGameObject;
     public Vector3[] Meshvertices;
@@ -40,7 +43,7 @@ public class MakeBoneGO : MonoBehaviour
         initCovarMat();
         covarMatCalcul();
         CalculValeurPropre();
-        ProjectionDonnéCentré();
+        CalculExtremum();
     }
     public void calculBarycentre()
     {
@@ -237,19 +240,49 @@ public class MakeBoneGO : MonoBehaviour
         }
     }
 
-    public void ProjectionDonnéCentré()
+    public Vector3 ProjectionDonnéCentré( Vector3 point)
     {
-        for (int i = 0 ; i <goPoints.Count ; i++)
-        {
-            goPoints[i].transform.position =
-                (Vector3.Dot(goPoints[i].transform.position, vecteurPropre) / Mathf.Pow(vecteurPropre.magnitude, 2)) *
-                vecteurPropre;
-        }
-    }
-
-    public void CalculExtremum()
-    {
-        
+        return (Vector3.Dot(point, vecteurPropre) / Mathf.Pow(vecteurPropre.magnitude, 2)) * vecteurPropre;
     }
     
+    public void CalculExtremum()
+    {
+        Vector3 minusExtremus = Vector3.zero;
+        float minusDistancius = 0;
+        Vector3 bigusExtremus = Vector3.zero;
+        float bigusDistancius = 0;
+        int i = 0;
+        int m = 0;
+        int b = 0;
+        foreach (var point in goPoints)
+        {
+            i++;
+            float distance = Vector3.Distance(bary.transform.position , point.transform.position);
+            float angle = Vector3.SignedAngle(bary.transform.position-point.transform.position,bary.transform.forward, Vector3.up);
+            if (distance >= minusDistancius && angle < 0)
+            {
+                minusDistancius = distance;
+                minusExtremus = point.transform.position;
+                m++;
+            }
+            else if (distance >= bigusDistancius && angle > 0)
+            {
+                bigusDistancius = distance;
+                bigusExtremus = point.transform.position;
+                b++;
+            }
+
+        }
+        
+        Debug.Log("Total Iter :" + i + "\n Total Minus : "+ m + " Total Bigus : " + b + " = " + (m+b) );
+        
+        Debug.Log(minusExtremus);
+        Debug.Log(bigusExtremus);
+        
+        qL = Instantiate(prefabExtrmum, ProjectionDonnéCentré(minusExtremus), Quaternion.Euler(Vector3.zero));
+        qK = Instantiate(prefabExtrmum, ProjectionDonnéCentré(bigusExtremus), Quaternion.Euler(Vector3.zero));
+
+
+    }
+
 }
