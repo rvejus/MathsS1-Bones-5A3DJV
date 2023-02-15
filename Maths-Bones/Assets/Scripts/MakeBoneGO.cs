@@ -23,7 +23,7 @@ public class MakeBoneGO : MonoBehaviour
     
     public float valeurPropre = 0;
     public Vector3 vecteurPropre = new Vector3();
-    public List<Vector3> PointProjete = new List<Vector3>();
+    
 
     public Vector3[] worldPt;
     
@@ -45,6 +45,7 @@ public class MakeBoneGO : MonoBehaviour
         covarMatCalcul();
         CalculValeurPropre();
         CalculExtremum();
+        decenter();
     }
     public void calculBarycentre()
     {
@@ -69,6 +70,20 @@ public class MakeBoneGO : MonoBehaviour
         {
             go.transform.position -= OG;
         }
+        //PrefabTransform.position -= OG;
+    }
+    public void decenter()
+    {
+       // OG = Vector3.zero + bary.transform.position;
+        bary.transform.position = Vector3.zero;
+        foreach (GameObject go in goPoints)
+        {
+            go.transform.position += OG;
+        }
+
+        bary.transform.position += OG;
+        qL.transform.position += OG;
+        qK.transform.position += OG;
         //PrefabTransform.position -= OG;
     }
     public void initCovarMat()
@@ -236,18 +251,34 @@ public class MakeBoneGO : MonoBehaviour
             } */
             V0 = vecteurPropre;
             iteration++;
-            Debug.Log("Valeur propre a l'iteration " + iteration + " = "+ valeurPropre);
-            Debug.Log("Vecteur propre a l'iteration " + iteration + " = "+ vecteurPropre);
+           // Debug.Log("Valeur propre a l'iteration " + iteration + " = "+ valeurPropre);
+            //Debug.Log("Vecteur propre a l'iteration " + iteration + " = "+ vecteurPropre);
         }
     }
 
-    public Vector3 ProjectionDonnéCentré( Vector3 point)
+    public List<Vector3> ProjectionDonneCentre( )
+    {
+        List<Vector3> PointProjete = new List<Vector3>() ;
+        for (int i = 0 ; i <goPoints.Count  ; i++)
+        {
+            PointProjete.Add((Vector3.Dot(goPoints[i].transform.position, vecteurPropre) /
+                                 Mathf.Pow(vecteurPropre.magnitude, 2)) *
+                                vecteurPropre);
+        }
+        
+        Debug.Log(PointProjete.Count);
+        return PointProjete;
+    }
+    public Vector3 ProjectionCentre( Vector3 point)
     {
         return (Vector3.Dot(point, vecteurPropre) / Mathf.Pow(vecteurPropre.magnitude, 2)) * vecteurPropre;
     }
     
     public void CalculExtremum()
     {
+        
+        List<Vector3> points = ProjectionDonneCentre();
+        Debug.Log(points.Count);
         Vector3 minusExtremus = Vector3.zero;
         float minusDistancius = 0;
         Vector3 bigusExtremus = Vector3.zero;
@@ -255,21 +286,21 @@ public class MakeBoneGO : MonoBehaviour
         int i = 0;
         int m = 0;
         int b = 0;
-        foreach (var point in goPoints)
+        foreach (var point in points)
         {
             i++;
-            float distance = Vector3.Distance(bary.transform.position , point.transform.position);
-            float angle = Vector3.SignedAngle(bary.transform.position-point.transform.position,bary.transform.forward, Vector3.up);
+            float distance = Vector3.Distance(bary.transform.position , point);
+            float angle = Vector3.SignedAngle(bary.transform.position-point,bary.transform.forward, Vector3.up);
             if (distance >= minusDistancius && angle < 0)
             {
                 minusDistancius = distance;
-                minusExtremus = point.transform.position;
+                minusExtremus = point;
                 m++;
             }
             else if (distance >= bigusDistancius && angle > 0)
             {
                 bigusDistancius = distance;
-                bigusExtremus = point.transform.position;
+                bigusExtremus = point;
                 b++;
             }
 
@@ -280,10 +311,8 @@ public class MakeBoneGO : MonoBehaviour
         Debug.Log(minusExtremus);
         Debug.Log(bigusExtremus);
         
-        qL = Instantiate(prefabExtrmum, ProjectionDonnéCentré(minusExtremus), Quaternion.Euler(Vector3.zero));
-        qK = Instantiate(prefabExtrmum, ProjectionDonnéCentré(bigusExtremus), Quaternion.Euler(Vector3.zero));
-
-
+        qL = Instantiate(prefabExtrmum, minusExtremus, Quaternion.Euler(Vector3.zero));
+        qK = Instantiate(prefabExtrmum, bigusExtremus, Quaternion.Euler(Vector3.zero));
     }
 
 }
